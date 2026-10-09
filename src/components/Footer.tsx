@@ -25,27 +25,18 @@ export function Footer({ settings, categories, lang }: { settings: Settings; cat
             <h4>{t("support")}</h4>
             <ul>
               {settings.trust.map((x) => <li key={x.id}><Link href={`/#info-${x.id}`}>{L(x.title, lang)}</Link></li>)}
-              {c.whatsapp && <li><a href={`https://wa.me/${c.whatsapp.replace(/\D/g, "")}`}>WhatsApp</a></li>}
+              {c.whatsapp && <li><a href={`https://wa.me/${c.whatsapp.replace(/\D/g, "")}`}>{lang === "bn" ? "হোয়াটসঅ্যাপ" : "WhatsApp"}: {c.whatsapp.replace(/^880/, "0")}</a></li>}
               {c.phone && <li><a href={`tel:${c.phone}`}>{c.phone}</a></li>}
               {c.email && <li><a href={`mailto:${c.email}`}>{c.email}</a></li>}
               {L(c.address, lang) && <li>{L(c.address, lang)}</li>}
-              {!c.whatsapp && !c.phone && !c.email && <li style={{ opacity: .7 }}>{t("contact")}: —</li>}
+              
             </ul>
             {(c.facebook || c.instagram) && (
               <ul style={{ marginTop: 14 }}>
-                {c.facebook && <li><a href={c.facebook} rel="noopener noreferrer" target="_blank">Facebook</a></li>}
+                {c.facebook && <li><a href={c.facebook} rel="noopener noreferrer" target="_blank">{lang === "bn" ? "ফেসবুক পেজ" : "Facebook"}</a></li>}
                 {c.instagram && <li><a href={c.instagram} rel="noopener noreferrer" target="_blank">Instagram</a></li>}
               </ul>
             )}
-          </div>
-          <div>
-            <h4>{t("newsletter")}</h4>
-            <form style={{ display: "flex", gap: 8 }}>
-              <label className="vh" htmlFor="nl">{t("emailPlaceholder")}</label>
-              <input id="nl" className="field" type="email" placeholder={t("emailPlaceholder")} disabled />
-              <button className="btn" type="button" disabled>{t("subscribe")}</button>
-            </form>
-            <p style={{ marginTop: 8, fontSize: 12 }}>{t("newsletterNote")}</p>
           </div>
         </div>
         <div className="footer__bottom">

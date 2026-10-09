@@ -6,6 +6,7 @@ import type { Product } from "@/lib/types";
 import { useLang } from "./Providers";
 import { ProductCardClient } from "./ProductCardClient";
 import { uniqueSizes } from "@/lib/product";
+import { num } from "@/lib/i18n";
 
 export interface CatLite { id: string; slug: string; name: string }
 
@@ -13,7 +14,7 @@ export function ShopGrid({ products, categories, initial, fixedCategory }: {
   products: Product[]; categories: CatLite[]; fixedCategory?: string;
   initial: { q: string; sort: string; cat: string; size: string };
 }) {
-  const { t, l } = useLang();
+  const { t, l, lang } = useLang();
   const router = useRouter();
   const path = usePathname();
   const [q, setQ] = useState(initial.q);
@@ -82,7 +83,7 @@ export function ShopGrid({ products, categories, initial, fixedCategory }: {
           </select>
         </div>
       </div>
-      <p className="count" aria-live="polite" style={{ marginBottom: 20 }}>{t("results", { n: list.length })}</p>
+      <p className="count" aria-live="polite" style={{ marginBottom: 20 }}>{t("results", { n: num(list.length, lang) })}</p>
       {list.length > 0 ? (
         <div className="grid">{list.map((p, i) => <ProductCardClient key={p.id} p={p} priority={i < 4} />)}</div>
       ) : (

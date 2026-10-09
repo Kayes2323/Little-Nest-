@@ -2,35 +2,34 @@
 import { useState } from "react";
 import type { Review } from "@/lib/types";
 import { useLang } from "./Providers";
-import type { DictKey } from "@/lib/i18n";
-import { num } from "@/lib/i18n";
+import { num, type DictKey } from "@/lib/i18n";
+import { whatsappUrl } from "@/lib/bd";
+import { IconWhatsApp } from "./Icons";
 
 const Stars = ({ n }: { n: number }) => <span className="stars" aria-hidden>{"★".repeat(n)}<span style={{ color: "#d9cfba" }}>{"★".repeat(5 - n)}</span></span>;
 
-export function Reviews({ reviews, products }: { reviews: Review[]; products: { id: string; name: string }[] }) {
+/** Shows reviews from src/data/seed.ts. New reviews are sent to the shop on WhatsApp (nothing is auto-published). */
+export function Reviews({ reviews, products, whatsapp }: { reviews: Review[]; products: { id: string; name: string }[]; whatsapp: string }) {
   const { t, lang } = useLang();
   const [f, setF] = useState({ name: "", text: "", rating: 0, productId: "" });
   const [errs, setErrs] = useState<Record<string, DictKey>>({});
-  const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
-  const [fail, setFail] = useState(false);
+  const [link, setLink] = useState("");
   const avg = reviews.length ? reviews.reduce((a, r) => a + r.rating, 0) / reviews.length : 0;
   const nameOf = (id: string) => products.find((p) => p.id === id)?.name;
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setFail(false);
     const er: Record<string, DictKey> = {};
     if (f.name.trim().length < 2) er.name = "errReviewName";
     if (f.text.trim().length < 5) er.text = "errReviewText";
     if (!f.rating) er.rating = "errRating";
     setErrs(er);
     if (Object.keys(er).length) return;
-    setBusy(true);
-    try {
-      const r = await fetch("/api/reviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(f) });
-      if (r.ok) { setDone(true); setF({ name: "", text: "", rating: 0, productId: "" }); } else setFail(true);
-    } catch { setFail(true); } finally { setBusy(false); }
+    const about = f.productId ? nameOf(f.productId) : "";
+    const msg = [t("msgReview"), "★".repeat(f.rating) + "☆".repeat(5 - f.rating), f.text.trim(), about ? `(${about})` : "", `— ${f.name.trim()}`].filter(Boolean).join("\n");
+    const url = whatsappUrl(whatsapp, msg);
+    setLink(url);
+    window.open(url, "_blank", "noopener");
   };
 
   return (
@@ -53,7 +52,12 @@ export function Reviews({ reviews, products }: { reviews: Review[]; products: { 
       </div>
       <form className="form" onSubmit={submit} noValidate aria-label={t("writeReview")}>
         <h3 style={{ fontSize: 26 }}>{t("writeReview")}</h3>
-        {done ? <div className="banner" role="status">{t("reviewThanks")}</div> : (
+        {link ? (
+          <div className="form">
+            <div className="banner" role="status">{t("reviewThanks")}</div>
+            <a className="btn btn--wa" href={link} target="_blank" rel="noopener noreferrer"><IconWhatsApp />{t("reopenWa")}</a>
+          </div>
+        ) : (
           <>
             <div>
               <div id="rv-rating" style={{ fontSize: 14, marginBottom: 2 }}>{t("rating")}</div>
@@ -70,8 +74,7 @@ export function Reviews({ reviews, products }: { reviews: Review[]; products: { 
               <option value="">{t("generalReview")}</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
             <label>{t("yourReview")}<textarea className="field" value={f.text} aria-invalid={errs.text ? true : undefined} onChange={(e) => setF({ ...f, text: e.target.value })} />
               {errs.text && <span className="err" role="alert">{t(errs.text)}</span>}</label>
-            {fail && <div className="banner banner--err" role="alert">{t("errGeneric")}</div>}
-            <button className="btn" type="submit" disabled={busy}>{t("sendReview")}</button>
+            <button className="btn btn--wa" type="submit" disabled={!whatsapp}><IconWhatsApp />{t("sendReview")}</button>
             <p className="note">{t("reviewsNote")}</p>
           </>
         )}

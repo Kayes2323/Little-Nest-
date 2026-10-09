@@ -118,7 +118,7 @@ export default async function Home() {
       <section className="section section--cream" id="reviews">
         <div className="wrap">
           <div className="sec-head"><div><span className="eyebrow">Little Nest</span><h2>{t("reviews")}</h2></div></div>
-          <Reviews reviews={s.reviews.filter((r) => r.approved)} products={prods.map((p) => ({ id: p.id, name: L(p.name, lang) }))} />
+          <Reviews reviews={s.reviews} products={prods.map((p) => ({ id: p.id, name: L(p.name, lang) }))} whatsapp={s.settings.contact.whatsapp} />
         </div>
       </section>
     </>

@@ -95,31 +95,6 @@ export interface Settings {
   sections: { gallery: boolean; campaigns: boolean };
 }
 
-export type OrderStatus = "new" | "confirmed" | "shipped" | "delivered" | "cancelled";
-
-export interface OrderItem {
-  productId: string;
-  name: string;
-  variantId: string;
-  size: string;
-  color: string;
-  qty: number;
-  unitPrice: number;
-}
-
-export interface Order {
-  id: string;
-  createdAt: string;
-  status: OrderStatus;
-  customer: { name: string; phone: string; address: string; district: string; note: string };
-  items: OrderItem[];
-  subtotal: number;
-  delivery: number | null; // null = to be confirmed
-  total: number | null;
-  payment: "cod";
-  lang: Lang;
-}
-
 export interface Review {
   id: string;
   name: string;
@@ -127,14 +102,11 @@ export interface Review {
   text: string;
   productId: string; // "" = general
   createdAt: string;
-  /** Only approved reviews are shown. Submissions arrive unapproved. */
-  approved: boolean;
 }
 
 export interface Store {
   settings: Settings;
   categories: Category[];
   products: Product[];
-  orders: Order[];
   reviews: Review[];
 }

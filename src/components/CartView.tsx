@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { useCart, useLang } from "./Providers";
 import { Media } from "./Media";
+import { num } from "@/lib/i18n";
 
 export function CartView() {
   const { lines, ready, setQty, remove, subtotal, count } = useCart();
-  const { t, l, money } = useLang();
+  const { t, l, money, lang } = useLang();
   if (!ready) return <div className="empty" aria-busy="true" style={{ minHeight: 280 }} />;
   if (!lines.length)
     return (
@@ -24,10 +25,10 @@ export function CartView() {
             </Link>
             <div>
               <h3><Link href={`/products/${x.slug}`}>{l(x.name)}</Link></h3>
-              <small>{t("size")}: {x.size}{x.color ? ` · ${x.color}` : ""}</small>
+              {(x.size || x.color) && <small>{[x.size && `${t("size")}: ${x.size}`, x.color].filter(Boolean).join(" · ")}</small>}
               <div className="qty" role="group" aria-label={t("qty")}>
                 <button aria-label="−" onClick={() => setQty(x.key, x.qty - 1)} disabled={x.qty <= 1}>−</button>
-                <output aria-live="polite">{x.qty}</output>
+                <output aria-live="polite">{num(x.qty, lang)}</output>
                 <button aria-label="+" onClick={() => setQty(x.key, x.qty + 1)}>+</button>
               </div>
               <div><button className="linklike" onClick={() => remove(x.key)}>{t("remove")}</button></div>
@@ -37,7 +38,7 @@ export function CartView() {
         ))}
       </div>
       <aside className="summary" aria-label={t("yourCart")}>
-        <div className="row"><span>{t("subtotal")} · {t("items", { n: count })}</span><span>{money(subtotal)}</span></div>
+        <div className="row"><span>{t("subtotal")} · {t("items", { n: num(count, lang) })}</span><span>{money(subtotal)}</span></div>
         <p className="note">{t("shipTo")}</p>
         <Link className="btn btn--block" href="/checkout">{t("checkout")}</Link>
         <Link className="link" style={{ justifySelf: "center" }} href="/shop">{t("continueShopping")}</Link>

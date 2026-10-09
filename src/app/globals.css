@@ -9,7 +9,10 @@
   --gutter: clamp(16px, 4vw, 40px); --max: 1240px;
   --header-h: 64px;
 }
-html[lang="bn"] { --font-display: var(--f-bn), "Noto Serif Bengali", serif; --font-body: var(--f-bn), "Hind Siliguri", system-ui, sans-serif; }
+html[lang="bn"] { --font-display: var(--f-bn-display), "Tiro Bangla", "Noto Serif Bengali", serif; --font-body: var(--f-bn), "Hind Siliguri", system-ui, sans-serif; }
+html[lang="bn"] body { font-size: 17px; line-height: 1.75; }
+html[lang="bn"] h1, html[lang="bn"] h2, html[lang="bn"] h3, html[lang="bn"] h4 { font-weight: 400; line-height: 1.4; }
+html[lang="bn"] .logo__word { font-family: var(--f-display), "Cormorant Garamond", serif; }
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body { margin: 0; background: var(--ivory); color: var(--ink); font: 400 16px/1.6 var(--font-body); overflow-x: hidden; -webkit-font-smoothing: antialiased; }

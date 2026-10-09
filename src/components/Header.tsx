@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
+import { num } from "@/lib/i18n";
 import { useCart, useLang } from "./Providers";
 import { IconBag, IconClose, IconMenu, IconSearch } from "./Icons";
 import type { Settings } from "@/lib/types";
@@ -10,9 +11,9 @@ import type { Settings } from "@/lib/types";
 export function LangSwitch() {
   const { lang } = useLang();
   const router = useRouter();
-  const set = async (l: "en" | "bn") => {
+  const set = (l: "en" | "bn") => {
     if (l === lang) return;
-    await fetch("/api/lang", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lang: l }) });
+    document.cookie = `ln_lang=${l}; path=/; max-age=31536000; samesite=lax`;
     router.refresh();
   };
   return (
@@ -24,7 +25,7 @@ export function LangSwitch() {
 }
 
 export function Header({ announcement, categories }: { announcement: Settings["announcement"]; categories: { slug: string; name: string }[] }) {
-  const { t, l } = useLang();
+  const { t, l, lang } = useLang();
   const { count } = useCart();
   const path = usePathname();
   const router = useRouter();
@@ -61,8 +62,8 @@ export function Header({ announcement, categories }: { announcement: Settings["a
           <div className="header__tools">
             <LangSwitch />
             <button className="icon-btn" aria-label={t("search")} aria-expanded={searching} onClick={() => setSearching((s) => !s)}><IconSearch /></button>
-            <Link className="icon-btn" href="/cart" aria-label={`${t("cart")}${count ? `, ${t("items", { n: count })}` : ""}`}>
-              <IconBag />{count > 0 && <span className="badge">{count}</span>}
+            <Link className="icon-btn" href="/cart" aria-label={`${t("cart")}${count ? `, ${t("items", { n: num(count, lang) })}` : ""}`}>
+              <IconBag />{count > 0 && <span className="badge">{num(count, lang)}</span>}
             </Link>
           </div>
           {searching && (
@@ -88,7 +89,7 @@ export function Header({ announcement, categories }: { announcement: Settings["a
             </div>
             <Link className="big" href="/shop">{t("shop")}</Link>
             {categories.map((c) => <Link key={c.slug} className="big" href={`/collections/${c.slug}`}>{c.name}</Link>)}
-            <Link className="big" href="/cart">{t("cart")}{count ? ` (${count})` : ""}</Link>
+            <Link className="big" href="/cart">{t("cart")}{count ? ` (${num(count, lang)})` : ""}</Link>
           </div>
         </div>
       )}
