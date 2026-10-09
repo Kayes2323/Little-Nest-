@@ -42,6 +42,7 @@ export async function readStore(): Promise<Store> {
       categories: d.categories ?? seed.categories,
       products: d.products ?? seed.products,
       orders: d.orders ?? [],
+      reviews: d.reviews ?? [],
     };
   } catch {
     return seedStore();

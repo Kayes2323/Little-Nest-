@@ -66,6 +66,13 @@ export async function POST(req: Request) {
         o.status = payload.status;
         return { ok: true };
       }
+      if (type === "review") {
+        if (action === "delete") { s.reviews = s.reviews.filter((r) => r.id !== payload.id); return { ok: true }; }
+        const r = s.reviews.find((x) => x.id === payload.id);
+        if (!r) throw new Error("bad");
+        r.approved = Boolean(payload.approved);
+        return { ok: true };
+      }
       throw new Error("bad");
     });
     return NextResponse.json(result);

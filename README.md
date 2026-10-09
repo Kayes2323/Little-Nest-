@@ -13,10 +13,20 @@ cp .env.example .env.local          # set ADMIN_PASSWORD + ADMIN_SECRET
 npm run build && npm start
 ```
 
+## Current content (no admin needed)
+
+Products, photos and contact details live in **`src/data/seed.ts`**; photos are in `public/products/`. Edit that file and redeploy; the admin dashboard is optional and can be ignored.
+
+- **Set a price / sizes:** in `seedProducts`, change `price: null` to e.g. `price: 1250`, and add `variants: sizes(["0-3M","3-6M"])`. With a price set, Add to Cart and Cash on Delivery checkout switch on for that product. Until then each product shows "Price coming soon" and orders go through WhatsApp.
+- **Mark new arrivals:** set `isNew: true` (the New arrivals section appears only when at least one product has it).
+- **WhatsApp / Facebook:** `seedSettings.contact` (`whatsapp: "8801604508268"`, `facebook`).
+- **Reviews:** customers submit on the homepage; submissions stay hidden until approved in `/admin` → Reviews tab. No review is shown that wasn't submitted/approved.
+- If a `data/runtime/store.json` exists (created by admin edits or orders), it overrides `seed.ts`; delete it to go back to the file content.
+
 ## What is real vs. placeholder
 
 Nothing business-specific is invented. Out of the box: **no prices, no WhatsApp number, no delivery charges, no policies**.
-Six clearly tagged **Sample** products exist so layouts are visible; products without a price show "Price coming soon" and cannot be added to the cart.
+Products without a price show "Price coming soon" and cannot be added to the cart.
 The newsletter box is a **demo** (disabled, not connected).
 
 ## How to... (all in `/admin`)

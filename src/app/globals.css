@@ -301,3 +301,34 @@ html[lang="bn"] .opt__label { text-transform: none; font-size: 15px; }
   .lang button { padding: 0 9px; }
   .header__in { gap: 4px; }
 }
+
+/* Hero, split layout (poster photo + copy): the whole photo stays visible, no heavy cropping. */
+.hero--split { display: grid; grid-template-columns: 1fr; align-items: stretch; min-height: 0; background: var(--cream); color: var(--ink); }
+.hero--split::after { display: none; }
+.hero--split .hero__media { position: relative; inset: auto; z-index: 0; aspect-ratio: 4 / 5; order: -1; }
+.hero--split .hero__media > * { position: absolute; inset: 0; }
+.hero--split .wrap { display: flex; align-items: center; max-width: none; padding-block: 40px 56px; }
+.hero--split .hero__copy { padding: 0; max-width: 520px; }
+.hero--split .hero__copy .eyebrow { color: var(--sage-deep); }
+.hero--split .hero__cta .btn--light { background: var(--sage-deep); border-color: var(--sage-deep); color: #fff; }
+.hero--split .hero__cta .btn--light:hover { background: var(--ink); border-color: var(--ink); }
+.hero--split .hero__cta .btn--outline-light { color: var(--sage-deep); border-color: var(--sage-deep); }
+.hero--split .hero__cta .btn--outline-light:hover { background: var(--sage-deep); color: #fff; }
+@media (min-width: 900px) {
+  .hero--split { grid-template-columns: 1fr 1fr; min-height: min(84svh, 760px); }
+  .hero--split .hero__media { order: 2; aspect-ratio: auto; }
+  .hero--split .wrap { padding-inline: clamp(24px, 6vw, 96px); }
+}
+.coll-grid--2 { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 900px) { .coll-grid--2 .coll { aspect-ratio: 5 / 4; } }
+.btn--wa.btn--ghost-wa { background: transparent; color: #1f6b3a; }
+.btn--wa.btn--ghost-wa:hover { background: #1f6b3a; color: #fff; }
+.stars { color: #b8872b; letter-spacing: 2px; font-size: 18px; }
+.review { padding: 22px 0; border-bottom: 1px solid var(--line); display: grid; gap: 6px; }
+.review p { max-width: 62ch; }
+.review small { color: var(--muted); }
+.reviews-grid { display: grid; gap: 40px; }
+@media (min-width: 900px) { .reviews-grid { grid-template-columns: 1.2fr 1fr; gap: 72px; align-items: start; } }
+.starpick { display: flex; gap: 4px; }
+.starpick button { width: 44px; height: 44px; border: 0; background: none; font-size: 28px; color: #cfc5b0; line-height: 1; }
+.starpick button[aria-pressed="true"], .starpick button.on { color: #b8872b; }

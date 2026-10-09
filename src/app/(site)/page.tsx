@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { activeProducts, readStore, stockedCategories } from "@/lib/store";
 import { getLang } from "@/lib/lang";
 import { L, tr } from "@/lib/i18n";
+import { Reviews } from "@/components/Reviews";
 
 export default async function Home() {
   const [s, lang] = await Promise.all([readStore(), getLang()]);
@@ -24,7 +25,7 @@ export default async function Home() {
         <section className="section" id="collections">
           <div className="wrap">
             <div className="sec-head"><div><span className="eyebrow">Little Nest</span><h2>{t("shopByCollection")}</h2></div></div>
-            <div className="coll-grid">
+            <div className={`coll-grid${cats.length <= 2 ? " coll-grid--2" : ""}`}>
               {cats.map((c, i) => (
                 <Link key={c.id} href={`/collections/${c.slug}`} className="coll" aria-label={L(c.name, lang)}>
                   <Media src={c.imageUrl} alt="" seed={c.id} sizes="(min-width:760px) 33vw, 50vw" priority={i < 2} />
@@ -85,7 +86,7 @@ export default async function Home() {
 
       <section className="section">
         <div className="wrap story">
-          <div className="story__img"><Media src={st.imageUrl} alt="" seed="story" label={st.imageUrl ? undefined : t("mediaSoon")} sizes="(min-width:860px) 45vw, 100vw" /></div>
+          <div className="story__img"><Media src={st.imageUrl} alt="" focal="50% 58%" seed="story" label={st.imageUrl ? undefined : t("mediaSoon")} sizes="(min-width:860px) 45vw, 100vw" /></div>
           <div>
             <span className="eyebrow">{t("brandStory")}</span>
             <h2>{L(st.title, lang)}</h2>
@@ -109,10 +110,17 @@ export default async function Home() {
         <section className="section">
           <div className="wrap">
             <div className="sec-head"><div><span className="eyebrow">Little Nest</span><h2>{t("gallery")}</h2><p className="note" style={{ marginTop: 8 }}>{t("gallerySub")}</p></div></div>
-            <div className="gal">{s.settings.gallery.slice(0, 8).map((g, i) => <div key={i} style={{ position: "relative" }}><Media src={g.url} alt={g.alt} seed={`g${i}`} sizes="(min-width:800px) 25vw, 50vw" /></div>)}</div>
+            <div className="gal">{s.settings.gallery.slice(0, 8).map((g, i) => <div key={i} style={{ position: "relative" }}><Media src={g.url} alt={g.alt} focal="50% 55%" seed={`g${i}`} sizes="(min-width:800px) 25vw, 50vw" /></div>)}</div>
           </div>
         </section>
       )}
+
+      <section className="section section--cream" id="reviews">
+        <div className="wrap">
+          <div className="sec-head"><div><span className="eyebrow">Little Nest</span><h2>{t("reviews")}</h2></div></div>
+          <Reviews reviews={s.reviews.filter((r) => r.approved)} products={prods.map((p) => ({ id: p.id, name: L(p.name, lang) }))} />
+        </div>
+      </section>
     </>
   );
 }

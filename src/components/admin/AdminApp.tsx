@@ -8,7 +8,7 @@ import { Check, MediaField, TText, Txt, Upload } from "./kit";
 import { Media } from "../Media";
 import { formatTaka } from "@/lib/i18n";
 
-type Tab = "orders" | "products" | "categories" | "home" | "shop";
+type Tab = "orders" | "reviews" | "products" | "categories" | "home" | "shop";
 const emptyText = () => ({ en: "", bn: "" });
 const blankProduct = (): Product => ({
   id: "", slug: "", name: emptyText(), description: emptyText(), careNote: emptyText(), categoryIds: [], price: null, images: [],
@@ -32,7 +32,7 @@ export function AdminApp({ store, demoCreds }: { store: Store; demoCreds: boolea
     try { await fn(); flash(ok); router.refresh(); return true; } catch (e) { flash((e as Error).message); return false; }
   };
   const logout = async () => { await fetch("/api/admin/logout", { method: "POST" }); router.refresh(); };
-  const tabs: [Tab, string][] = [["orders", `Orders (${store.orders.filter((o) => o.status === "new").length} new)`], ["products", "Products"], ["categories", "Categories"], ["home", "Homepage"], ["shop", "Shop info"]];
+  const tabs: [Tab, string][] = [["orders", `Orders (${store.orders.filter((o) => o.status === "new").length} new)`], ["reviews", `Reviews (${store.reviews.filter((r) => !r.approved).length} pending)`], ["products", "Products"], ["categories", "Categories"], ["home", "Homepage"], ["shop", "Shop info"]];
 
   return (
     <>
@@ -48,6 +48,7 @@ export function AdminApp({ store, demoCreds }: { store: Store; demoCreds: boolea
       <div className="wrap" style={{ paddingBottom: 80 }}>
         {demoCreds && <div className="banner" style={{ marginTop: 16 }}>Demo credentials in use. Set ADMIN_PASSWORD and ADMIN_SECRET before going live.</div>}
         {tab === "orders" && <Orders orders={store.orders} run={run} />}
+        {tab === "reviews" && <ReviewsAdmin reviews={store.reviews} run={run} />}
         {tab === "products" && <Products store={store} run={run} />}
         {tab === "categories" && <Categories cats={store.categories} run={run} />}
         {tab === "home" && <HomeSettings s={store.settings} run={run} />}
@@ -86,6 +87,26 @@ function Orders({ orders, run }: { orders: Order[]; run: Run }) {
           </table>
         </div>
       )}
+    </section>
+  );
+}
+
+/* ---------------- Reviews ---------------- */
+function ReviewsAdmin({ reviews, run }: { reviews: Store["reviews"]; run: Run }) {
+  return (
+    <section className="panel">
+      <h2>Reviews</h2>
+      <p className="note">Submissions stay hidden until you approve them. Only approve real customer reviews.</p>
+      {reviews.length === 0 ? <p className="note">No reviews yet.</p> : reviews.map((r) => (
+        <div key={r.id} className="panel" style={{ margin: 0 }}>
+          <div><span className="stars">{"★".repeat(r.rating)}</span> <strong>{r.name}</strong> <span className="pill">{r.approved ? "Shown" : "Pending"}</span></div>
+          <p>{r.text}</p>
+          <div className="row-end">
+            <button className="btn btn--danger btn--sm" onClick={() => confirm("Delete review?") && run(() => api("review", "delete", { id: r.id }), "Deleted")}>Delete</button>
+            <button className="btn btn--sm" onClick={() => run(() => api("review", "set", { id: r.id, approved: !r.approved }))}>{r.approved ? "Hide" : "Approve & show"}</button>
+          </div>
+        </div>
+      ))}
     </section>
   );
 }

@@ -1,7 +1,8 @@
 import type { Product, Variant } from "./types";
 
 export const variantAvailable = (v: Variant) => v.stock == null || v.stock > 0;
-export const productAvailable = (p: Product) => p.variants.some(variantAvailable);
+/** Products with no variants listed (sizes not set yet) are treated as available; ordering happens via WhatsApp. */
+export const productAvailable = (p: Product) => p.variants.length === 0 || p.variants.some(variantAvailable);
 export const purchasable = (p: Product) => p.price != null && productAvailable(p);
 export const uniqueSizes = (p: Product) => [...new Set(p.variants.map((v) => v.size))];
 export const uniqueColors = (p: Product) => {

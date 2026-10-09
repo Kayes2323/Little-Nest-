@@ -120,9 +120,21 @@ export interface Order {
   lang: Lang;
 }
 
+export interface Review {
+  id: string;
+  name: string;
+  rating: number; // 1-5
+  text: string;
+  productId: string; // "" = general
+  createdAt: string;
+  /** Only approved reviews are shown. Submissions arrive unapproved. */
+  approved: boolean;
+}
+
 export interface Store {
   settings: Settings;
   categories: Category[];
   products: Product[];
   orders: Order[];
+  reviews: Review[];
 }

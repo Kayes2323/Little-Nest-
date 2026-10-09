@@ -34,11 +34,11 @@ export function Hero({ hero }: { hero: Settings["hero"] }) {
   };
 
   return (
-    <section className="hero" aria-label={l(hero.headline)}>
+    <section className={`hero${useVideo || !hero.posterUrl || posterBad ? "" : " hero--split"}`} aria-label={l(hero.headline)}>
       {hero.posterUrl && !posterBad ? (
         <div className="hero__media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={hero.posterUrl} alt="" fetchPriority="high" onError={() => setPosterBad(true)} />
+          <img src={hero.posterUrl} alt="" fetchPriority="high" onError={() => setPosterBad(true)} style={{ objectFit: "cover" }} />
         </div>
       ) : (
         <div className="hero__ph" aria-hidden><Silhouette /></div>

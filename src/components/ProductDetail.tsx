@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Product } from "@/lib/types";
 import { useCart, useLang } from "./Providers";
 import { Media } from "./Media";
@@ -22,6 +22,8 @@ export function ProductDetail({ p, whatsapp }: { p: Product; whatsapp: string })
   const [color, setColor] = useState(colors.length === 1 ? colors[0].n : "");
   const [img, setImg] = useState(0);
   const [hint, setHint] = useState(false);
+  const [pageUrl, setPageUrl] = useState("");
+  useEffect(() => setPageUrl(window.location.href), []);
 
   const needColor = colors.length > 0;
   const variant = p.variants.find((v) => v.size === size && (v.color || "") === (needColor ? color : ""));
@@ -43,7 +45,7 @@ export function ProductDetail({ p, whatsapp }: { p: Product; whatsapp: string })
     add(lineFor(p, variant.id));
     notify(t("added"));
   };
-  const waMsg = `${lang === "bn" ? "আমি এটি অর্ডার করতে চাই" : "I'd like to order"}: ${name}${size ? ` / ${t("size")} ${size}` : ""}${color ? ` / ${color}` : ""}${p.price != null ? ` / ${money(p.price)}` : ""}\n${typeof window !== "undefined" ? window.location.href : ""}`;
+  const waMsg = `${lang === "bn" ? "আমি এটি অর্ডার করতে চাই" : "I'd like to order"}: ${name}${size ? ` / ${t("size")} ${size}` : ""}${color ? ` / ${color}` : ""}${p.price != null ? ` / ${money(p.price)}` : ""}\n${pageUrl}`;
 
   return (
     <div className="pdp">
@@ -100,16 +102,15 @@ export function ProductDetail({ p, whatsapp }: { p: Product; whatsapp: string })
         {stockLine()}
 
         <div className="pdp__buy">
-          {p.price != null ? (
+          {p.price != null && (
             <button className="btn btn--block" onClick={addToCart} aria-disabled={ready && !canBuy}>{ready && variant && !variantAvailable(variant) ? t("outOfStock") : t("addToCart")}</button>
-          ) : (
-            <button className="btn btn--block" disabled>{t("priceNeeded")}</button>
           )}
           {whatsapp ? (
-            <a className="btn btn--wa btn--block" href={whatsappUrl(whatsapp, waMsg)} target="_blank" rel="noopener noreferrer"><IconWhatsApp />{t("orderWa")}</a>
+            <a className={`btn btn--wa btn--block${p.price != null ? " btn--ghost-wa" : ""}`} href={whatsappUrl(whatsapp, waMsg)} target="_blank" rel="noopener noreferrer"><IconWhatsApp />{t("orderWa")}</a>
           ) : (
             <button className="btn btn--ghost btn--block" disabled title={t("waNotSet")}>{t("orderWa")}</button>
           )}
+          {p.price == null && whatsapp && <p className="note">{t("askSizePrice")}</p>}
           {!whatsapp && <p className="note">{t("waNotSet")}</p>}
         </div>
 
